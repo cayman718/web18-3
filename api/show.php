@@ -2,6 +2,6 @@
 
 $row = $Movie->find($_POST['id']);
 
-// $row['sh'] = ($row['sh'] == 1) ?'隱藏':'顯示';
 $row['sh'] = ($row['sh'] + 1) % 2;
+
 $Movie->save($row);
