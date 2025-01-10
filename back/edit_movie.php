@@ -16,6 +16,11 @@
     padding: 5px;
 }
 </style>
+<?php
+$row=$
+
+
+?>
 <form action="./api/add_movie.php" method="post" enctype="multpart/form-data">
 
     <div style="width:70%;margin:auto;display:flex;">
@@ -90,6 +95,7 @@
         </div>
     </div>
     <div class="ct">
+        <input type="hidden" name="id" value="<?=$row['id']?>">
         <input type="submit" value="編輯">
         <input type="reset" value="重置">
     </div>
