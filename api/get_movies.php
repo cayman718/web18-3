@@ -6,5 +6,5 @@ $rows = $Movie->all(['sh' => 1], " AND ondate BETWEEN '$ondate' AND '$today' ord
 foreach ($rows as $row) {
     echo "<option value='{$row['id']}'>";
     echo $row['name'];
-    echo "</otion>";
+    echo "</option>";
 }
