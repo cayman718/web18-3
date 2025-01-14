@@ -44,14 +44,31 @@
     bottom: 2px;
 }
 </style>
-<?php include_once "db.php"; ?>
+<?php include_once "db.php";
+
+$rows = $Order->all(['movie' => $_GET['name'], 'date' => $_GET['date'], 'session' => $_GET['session']]);
+$seats = [];
+foreach ($rows as $row) {
+    $tmp = unserialize($row['seats']);
+    $seats = array_merge($seats, $tmp);
+}
+//dd($seats);
+?>
 
 <div id="info">
     <?php
     for ($i = 0; $i < 20; $i++) {
-        echo "<div class='seat null'>";
+        $booked = (in_array($i, $seats)) ? "booked" : "null";
+        echo "<div class='seat $booked'>";
+        /* if(in_array($i,$seats)){
+                echo "<div class='seat booked'>";
+            }else{
+                echo "<div class='seat null'>";
+            } */
         echo  floor($i / 5) + 1 . "排" . ($i % 5 + 1) . "號";
-        echo "<input type='checkbox' class='chk' value='$i'>";
+        if (!in_array($i, $seats)) {
+            echo "<input type='checkbox' class='chk' value='$i'>";
+        }
         echo "</div>";
     }
     ?>
@@ -69,13 +86,7 @@
 </div>
 <script>
 let seats = new Array();
-let num = {
-    1: '一',
-    2: '二',
-    3: '三',
-    4: '四',
-    5: '五'
-};
+//let num={1:'一',2:'二',3:'三',4:'四'};
 
 $(".chk").on("change", function() {
     if ($(this).prop('checked')) {
@@ -84,21 +95,23 @@ $(".chk").on("change", function() {
             $(this).prop('checked', false)
         } else {
             seats.push($(this).val())
+            $(this).parent().removeClass('null').addClass('booked')
         }
     } else {
         seats.splice(seats.indexOf($(this).val()), 1)
-
+        $(this).parent().removeClass('booked').addClass('null')
     }
-    // $("#tickets").text(seats.length) //數字
-    $("#tickets").text(num[seats.length]) //文字
-    // console.log(seats)
+    $("#tickets").text(seats.length)
+    //$("#tickets").text(num[seats.length])
+    //console.log(seats)
 
 })
 
 function checkout() {
-    movie.seats = seats; //movie['seats']=seats;
+    movie.seats = seats;
+    //console.log(movie)
     $.post("api/checkout.php", movie, function(res) {
-        // console.log(res);
+        //console.log(res)
         $("#mm").html(res);
     })
 }

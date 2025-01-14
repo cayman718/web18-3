@@ -2,6 +2,7 @@
 
 $movie = $Movie->find($_GET['movie']);
 $date = $_GET['date'];
+$today = date("Y-m-d");
 
 $sess = [
     '1' => "14:00~16:00",
@@ -10,21 +11,22 @@ $sess = [
     '4' => "20:00~22:00",
     '5' => "22:00~24:00"
 ];
-
-$now = date("G");
-$start = 1;
-
-if ($date == date("Y-m-d")) {
-    if ($now >= 13) {
-        $start = ceil(($now - 13) / 2) + 1;
-    }
+$now = date("G") - 13;
+if ($today == $date && $now < 9) {
+    $start = ($now > 0) ? ceil($now / 2) + 1 : 1;
+} else {
+    $start = 1;
 }
-
-$start = ($start < 1) ? 1 : $start;
-
+//echo $now . $start;
 $seats = 20;
 
 for ($i = $start; $i <= 5; $i++) {
+    $booked = $Order->sum('qt', [
+        'movie' => $movie['name'],
+        'date' => $date,
+        'session' => $sess[$i]
+    ]);
+    $seats = 20 - $booked;
     echo "<option value='{$sess[$i]}'>";
     echo "  {$sess[$i]} 剩餘座位 $seats";
     echo "</option>";
